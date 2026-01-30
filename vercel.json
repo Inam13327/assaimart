@@ -19,6 +19,10 @@
       "dest": "server/index.js"
     },
     {
+      "src": "/admin/(.*)",
+      "dest": "server/index.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "server/index.js"
     }
