@@ -122,6 +122,15 @@ export async function initDB() {
           );
         }
       }
+
+      // Ensure subscribers table has is_read column
+      try {
+        await connection.query("ALTER TABLE subscribers ADD COLUMN is_read BOOLEAN DEFAULT FALSE");
+        console.log("Added is_read column to subscribers table");
+      } catch (e) {
+        // Column likely exists
+      }
+
     } finally {
       connection.release();
     }
@@ -155,7 +164,8 @@ export async function handleRequest(req, res) {
 */
 // --- MODIFIED: Redirect Logic ---
   if (pathname === "/" || pathname === "/admin" || pathname === "/admin/") {
-    res.writeHead(302, { "Location": "/admin/login" });
+    // Redirect to Frontend Admin Login
+    res.writeHead(302, { "Location": "http://localhost:8080/admin/login" });
     res.end();
     return;
   }
@@ -860,19 +870,23 @@ export async function handleRequest(req, res) {
       }
       return;
     }
+
+    // DELETE Order
+    if (req.method === "DELETE") {
+      const ctx = await requireAdmin(req, res);
+      if (!ctx) return;
+      try {
+        // Delete order items first (though CASCADE might be set, let's be safe)
+        await pool.query("DELETE FROM order_items WHERE order_id = ?", [id]);
+        await pool.query("DELETE FROM orders WHERE id = ?", [id]);
+        sendJson(res, 200, { id });
+      } catch (e) {
+        sendJson(res, 500, { error: e.message });
+      }
+      return;
+    }
     return;
   }
 
   methodNotAllowed(res);
 }
-export const handleRequest = async (req, res) => {
-  const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
-  let path = parsedUrl.pathname;
-
-  // Agar Vercel path mein /api/ shuru mein laga raha hai toh usey remove karein
-  path = path.replace(/^\/api/, ''); 
-  
-  console.log("Handled Path:", path); // Debugging ke liye
-  
-  // Baaki aapka routing logic yahan niche aayega...
-};

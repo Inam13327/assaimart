@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import CartSidebar from "@/components/CartSidebar";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { getAdminSubscribers, type Subscriber } from "@/lib/api";
+import { getAdminSubscribers, markAdminSubscribersRead, type Subscriber } from "@/lib/api";
 
 const AdminSubscribers = () => {
   const navigate = useNavigate();
@@ -18,6 +18,9 @@ const AdminSubscribers = () => {
   useEffect(() => {
     if (!token) {
       navigate("/admin/login");
+    } else {
+      // Mark as read when page loads
+      markAdminSubscribersRead().catch((err) => console.error("Failed to mark subscribers read", err));
     }
   }, [token, navigate]);
 

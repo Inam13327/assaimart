@@ -43,6 +43,11 @@ const AdminDashboard = () => {
       ? data.unreadMessages
       : 0;
 
+  const unreadSubscribers =
+    !isLoading && !error && data && typeof data.unreadSubscribers === "number"
+      ? data.unreadSubscribers
+      : 0;
+
   const newOrdersCount =
     !isLoading && !error && data && typeof data.newOrders === "number"
       ? data.newOrders
@@ -79,6 +84,9 @@ const AdminDashboard = () => {
               </p>
             </div>
             <div className="flex gap-2">
+              <Button variant="outline" asChild>
+                <Link to="/">Home</Link>
+              </Button>
               <Button variant="outline" onClick={handleLogout}>
                 Logout
               </Button>
@@ -142,8 +150,15 @@ const AdminDashboard = () => {
                 )}
               </Link>
             </Button>
-            <Button variant="outline" asChild>
-              <Link to="/admin/subscribers">SUBSCRIBERS</Link>
+            <Button variant="outline" asChild className="relative">
+              <Link to="/admin/subscribers" className="flex items-center gap-2">
+                <span>SUBSCRIBERS</span>
+                {unreadSubscribers > 0 && (
+                  <span className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-destructive px-1 text-[11px] font-semibold text-destructive-foreground">
+                    {unreadSubscribers}
+                  </span>
+                )}
+              </Link>
             </Button>
             <div className="flex flex-wrap items-center gap-2">
               <Input

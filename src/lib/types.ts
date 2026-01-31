@@ -84,4 +84,5 @@ export interface AdminOverview {
   totalOrders: number;
   newOrders: number;
    unreadMessages: number;
+   unreadSubscribers: number;
 }

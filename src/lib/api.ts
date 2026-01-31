@@ -258,6 +258,7 @@ export interface Subscriber {
   id: string;
   email: string;
   createdAt: string;
+  read?: boolean;
 }
 
 export function getAdminMessages() {
@@ -278,6 +279,12 @@ export function deleteAdminMessage(id: string) {
 
 export function getAdminSubscribers() {
   return request<Subscriber[]>("/admin/subscribers");
+}
+
+export function markAdminSubscribersRead() {
+  return request<{ success: boolean }>("/admin/subscribers/mark-read", {
+    method: "POST",
+  });
 }
 
 export function deleteAdminSubscriber(id: string) {
