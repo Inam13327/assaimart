@@ -86,6 +86,16 @@ const Checkout = () => {
                 />
               </div>
               <div className="space-y-2">
+                <label className="text-sm font-medium">Email Address</label>
+                <Input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  required
+                  placeholder="your@email.com"
+                />
+              </div>
+              <div className="space-y-2">
                 <label className="text-sm font-medium">Phone Number</label>
                 <Input
                   value={form.phone}
