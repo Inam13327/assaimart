@@ -288,7 +288,7 @@ export function markAdminSubscribersRead() {
 }
 
 export function deleteAdminSubscriber(id: string) {
-  return request(`/admin/subscribers/${id}`, {
+  return request<{ id: string }>(`/admin/subscribers/${id}`, {
     method: "DELETE",
   });
 }

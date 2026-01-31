@@ -77,6 +77,26 @@ const AdminSubscribers = () => {
     }
   };
 
+  const deleteMutation = useMutation({
+    mutationFn: deleteAdminSubscriber,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-subscribers"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+      toast({
+        title: "Subscriber deleted",
+        description: "The subscriber has been removed successfully.",
+      });
+    },
+    onError: (err) => {
+      const message = err instanceof Error ? err.message : "Failed to delete subscriber";
+      toast({
+        title: "Error",
+        description: message,
+        variant: "destructive",
+      });
+    },
+  });
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <CartSidebar />

@@ -603,7 +603,27 @@ export async function handleRequest(req, res) {
     if (!ctx) return;
     try {
       const [rows] = await pool.query("SELECT * FROM subscribers ORDER BY created_at DESC");
-      sendJson(res, 200, rows);
+      const subscribers = rows.map(s => ({
+        id: s.id,
+        email: s.email,
+        createdAt: s.created_at,
+        isRead: Boolean(s.is_read)
+      }));
+      sendJson(res, 200, subscribers);
+    } catch (e) {
+      sendJson(res, 500, { error: e.message });
+    }
+    return;
+  }
+
+  // Admin Delete Subscriber
+  if (pathname && pathname.startsWith("/api/admin/subscribers/") && req.method === "DELETE") {
+    const id = pathname.split("/").pop();
+    const ctx = await requireAdmin(req, res);
+    if (!ctx) return;
+    try {
+      await pool.query("DELETE FROM subscribers WHERE id = ?", [id]);
+      sendJson(res, 200, { id });
     } catch (e) {
       sendJson(res, 500, { error: e.message });
     }
