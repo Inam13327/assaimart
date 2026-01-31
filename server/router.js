@@ -865,3 +865,14 @@ export async function handleRequest(req, res) {
 
   methodNotAllowed(res);
 }
+export const handleRequest = async (req, res) => {
+  const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
+  let path = parsedUrl.pathname;
+
+  // Agar Vercel path mein /api/ shuru mein laga raha hai toh usey remove karein
+  path = path.replace(/^\/api/, ''); 
+  
+  console.log("Handled Path:", path); // Debugging ke liye
+  
+  // Baaki aapka routing logic yahan niche aayega...
+};
