@@ -6,25 +6,14 @@
       "use": "@vercel/node"
     }
   ],
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/admin/login",
-      "permanent": false
-    }
-  ],
   "routes": [
     {
       "src": "/api/(.*)",
       "dest": "server/index.js"
     },
     {
-      "src": "/admin/(.*)",
-      "dest": "server/index.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "server/index.js"
+      "dest": "index.html"
     }
   ]
 }

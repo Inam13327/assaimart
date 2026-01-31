@@ -33,6 +33,10 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+          {/* Jab bhi koi site kholay, seedha admin login par bhej do */}
+        <Route path="/" element={<Navigate to="/admin/login" replace />} />
+        
+        <Route path="/admin/login" element={<LoginPage />} />
             <Route path="/" element={<Index />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/about" element={<About />} />
