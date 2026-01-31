@@ -610,6 +610,19 @@ export async function handleRequest(req, res) {
     return;
   }
 
+  // Admin Mark Subscribers Read
+  if (pathname === "/api/admin/subscribers/mark-read" && req.method === "POST") {
+    const ctx = await requireAdmin(req, res);
+    if (!ctx) return;
+    try {
+      await pool.query("UPDATE subscribers SET is_read = TRUE");
+      sendJson(res, 200, { success: true });
+    } catch (e) {
+      sendJson(res, 500, { error: e.message });
+    }
+    return;
+  }
+
   // Admin Products (GET/POST)
   if (pathname === "/api/admin/products") {
     if (req.method === "GET") {

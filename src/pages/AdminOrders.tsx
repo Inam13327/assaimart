@@ -139,6 +139,7 @@ const AdminOrders = () => {
                   {displayedOrders.map((order) => (
                       <TableRow key={order.id}>
                         <TableCell>{order.customer.name}</TableCell>
+                        <TableCell>{order.customer.email}</TableCell>
                         <TableCell>{order.customer.phone}</TableCell>
                         <TableCell className="max-w-xs text-xs">{order.customer.address}</TableCell>
                         <TableCell className="text-xs">
