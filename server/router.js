@@ -536,12 +536,14 @@ export async function handleRequest(req, res) {
       const [ordCount] = await pool.query("SELECT count(*) as count FROM orders");
       const [newOrdCount] = await pool.query("SELECT count(*) as count FROM orders WHERE status = 'processing'");
       const [msgCount] = await pool.query("SELECT count(DISTINCT email) as count FROM messages WHERE is_read = FALSE");
+      const [subCount] = await pool.query("SELECT count(*) as count FROM subscribers WHERE is_read = FALSE");
       
       const overview = {
         totalProducts: prodCount[0].count,
         totalOrders: ordCount[0].count,
         newOrders: newOrdCount[0].count,
         unreadMessages: msgCount[0].count,
+        unreadSubscribers: subCount[0].count,
       };
       sendJson(res, 200, overview);
     } catch (e) {
