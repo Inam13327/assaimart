@@ -7,7 +7,7 @@
     },
     {
       "source": "/admin/login",
-      "destination": "/index.html" 
+      "destination": "/pages/AdminLogin" 
     }
   ],
   "redirects": [
