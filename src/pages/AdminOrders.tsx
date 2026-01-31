@@ -126,6 +126,7 @@ const AdminOrders = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Customer</TableHead>
+                    <TableHead>Email</TableHead>
                     <TableHead>Contact</TableHead>
                     <TableHead>Address</TableHead>
                     <TableHead>Items</TableHead>

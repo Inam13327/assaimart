@@ -17,11 +17,6 @@
       "dest": "/server/index.js"
     },
     {
-      "src": "/",
-      "status": 308,
-      "headers": { "Location": "/admin/login" }
-    },
-    {
       "handle": "filesystem"
     },
     {
