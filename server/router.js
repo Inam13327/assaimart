@@ -155,20 +155,6 @@ export async function handleRequest(req, res) {
     return;
   }
 
-  // Redirect root to frontend admin (Local Dev Friendly)
- /* if (pathname === "/" || pathname === "/admin" || pathname === "/admin/") {
-    res.writeHead(302, { "Location": "http://localhost:3000/admin/login" });
-    res.end();
-    return;
-  }
-*/
-// --- MODIFIED: Redirect Logic ---
-  if (pathname === "/" || pathname === "/admin" || pathname === "/admin/") {
-    // Redirect to Frontend Admin Login
-    res.writeHead(302, { "Location": "http://localhost:8080/admin/login" });
-    res.end();
-    return;
-  }
   if (!pathname || !pathname.startsWith("/api")) {
     notFound(res);
     return;

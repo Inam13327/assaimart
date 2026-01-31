@@ -4,27 +4,29 @@
     {
       "src": "server/index.js",
       "use": "@vercel/node"
-    }
-  ],
-  "redirects": [
+    },
     {
-      "source": "/",
-      "destination": "/admin/login",
-      "permanent": false
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "server/index.js"
+      "dest": "/server/index.js"
     },
     {
-      "src": "/admin/(.*)",
-      "dest": "server/index.js"
+      "src": "/",
+      "status": 308,
+      "headers": { "Location": "/admin/login" }
+    },
+    {
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "server/index.js"
+      "dest": "/index.html"
     }
   ]
 }

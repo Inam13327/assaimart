@@ -1,7 +1,7 @@
 import type { AdminAuthResponse, AdminOverview, AdminProduct, AdminProductInput, Order, Product } from "./types";
 
 const API_BASE = import.meta.env.PROD 
-  ? "https://assaimartofficial.vercel.app/api" 
+  ? "/api" 
   : "http://localhost:4000/api";
 
 function logApiError(details: { method: string; path: string; status?: number; message?: string; error?: unknown }) {

@@ -85,7 +85,7 @@ const AdminDashboard = () => {
             </div>
             <div className="flex gap-2">
               <Button variant="outline" asChild>
-                <Link to="/">Home</Link>
+                <Link to="/home">Home</Link>
               </Button>
               <Button variant="outline" onClick={handleLogout}>
                 Logout
