@@ -2,8 +2,12 @@
   "version": 2,
   "rewrites": [
     {
+"source":"/api/(.*)",
+"destination" : "/admin/login"
+    },
+    {
       "source": "/api/(.*)",
-      "destination": "/server/index.js"
+      "destination": "/lib/api.ts"
     },
     {
       "source": "/admin/login",
