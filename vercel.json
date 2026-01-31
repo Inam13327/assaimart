@@ -1,24 +1,26 @@
 {
   "version": 2,
-  "rewrites": [
+  "builds": [
     {
-"source":"/api/(.*)",
-"destination" : "/admin/login"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/lib/api.ts"
-    },
-    {
-      "source": "/admin/login",
-      "destination": "/pages/AdminLogin" 
+      "src": "server/index.js",
+      "use": "@vercel/node"
     }
   ],
   "redirects": [
     {
       "source": "/",
       "destination": "/admin/login",
-      "permanent": false
+      "permanent": true
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "server/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "server/index.js"
     }
   ]
 }
