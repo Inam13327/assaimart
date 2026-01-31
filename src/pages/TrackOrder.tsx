@@ -79,8 +79,12 @@ const TrackOrder = () => {
                 Reference: <span className="font-mono">{order.id}</span>
               </p>
               <p className="text-sm">
-                Customer: {order.customer.name} ({order.customer.phone})
+                Customer: {order.customer.name}
               </p>
+              {order.customer.email && (
+                <p className="text-sm">Email: {order.customer.email}</p>
+              )}
+              <p className="text-sm">Phone: {order.customer.phone}</p>
               <p className="text-sm">Address: {order.customer.address}</p>
               <p className="mt-1 text-sm">Status: {order.status}</p>
               <p className="text-xs text-muted-foreground">
