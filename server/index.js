@@ -30,11 +30,14 @@ export default async function handler(req, res) {
   }
 }
 
-// 3. Local Development Support
-if (process.env.NODE_ENV !== 'production') {
+// 3. Server Startup (Works for Local, VPS, Hostinger Node.js)
+// If we are NOT running in a Vercel Serverless environment (which imports 'handler')
+// we should start the server. Hostinger/VPS sets NODE_ENV=production but needs listen().
+// Vercel sets VERCEL=1.
+if (!process.env.VERCEL) {
   const PORT = process.env.PORT || 4000;
   const server = http.createServer(handler);
   server.listen(PORT, () => {
-    console.log(`API server listening on http://localhost:${PORT}`);
+    console.log(`API server listening on port ${PORT}`);
   });
 }

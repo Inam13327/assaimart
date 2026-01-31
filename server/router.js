@@ -468,7 +468,7 @@ export async function handleRequest(req, res) {
         originalPrice: p.original_price ? Number(p.original_price) : undefined,
         categorySlug: p.category_slug,
         segment: p.segment,
-        tier: p.category_tier || "premium", // Use joined tier
+        tier: p.category_tier || "premium", // Fallback if join is null
         productType: p.product_type,
         featuredHome: Boolean(p.is_featured),
         imageUrl: p.image_url,
@@ -477,6 +477,9 @@ export async function handleRequest(req, res) {
         rating: p.rating ? Number(p.rating) : undefined,
         ratingMedia: typeof p.rating_media === 'string' ? JSON.parse(p.rating_media) : p.rating_media,
       }));
+      
+      // Fallback for missing tier (e.g. if category deleted)
+      // If we don't have tiers, frontend might crash if it relies on it for filtering
       
       sendJson(res, 200, products);
     } catch (e) {
