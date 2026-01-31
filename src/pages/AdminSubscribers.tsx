@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import CartSidebar from "@/components/CartSidebar";
 import { Button } from "@/components/ui/button";
@@ -14,15 +14,20 @@ const AdminSubscribers = () => {
       ? window.localStorage.getItem("adminToken")
       : null;
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!token) {
       navigate("/admin/login");
     } else {
       // Mark as read when page loads
-      markAdminSubscribersRead().catch((err) => console.error("Failed to mark subscribers read", err));
+      markAdminSubscribersRead()
+        .then(() => {
+          queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+        })
+        .catch((err) => console.error("Failed to mark subscribers read", err));
     }
-  }, [token, navigate]);
+  }, [token, navigate, queryClient]);
 
   const { data, isLoading, error } = useQuery<Subscriber[]>({
     queryKey: ["admin-subscribers"],
