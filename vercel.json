@@ -4,6 +4,10 @@
     {
       "source": "/api/(.*)",
       "destination": "/server/index.js"
+    },
+    {
+      "source": "/admin/login",
+      "destination": "/login.html" 
     }
   ],
   "redirects": [
