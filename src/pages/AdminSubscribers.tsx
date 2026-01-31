@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 
 import CartSidebar from "@/components/CartSidebar";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { getAdminSubscribers, markAdminSubscribersRead, type Subscriber } from "@/lib/api";
+import { getAdminSubscribers, markAdminSubscribersRead, deleteAdminSubscriber, type Subscriber } from "@/lib/api";
 
 const AdminSubscribers = () => {
   const navigate = useNavigate();
@@ -146,6 +146,7 @@ const AdminSubscribers = () => {
                         <tr className="border-b text-xs text-muted-foreground">
                           <th className="py-2 pr-4">Email</th>
                           <th className="py-2">Subscribed At</th>
+                          <th className="py-2 text-right">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -154,6 +155,20 @@ const AdminSubscribers = () => {
                             <td className="py-2 pr-4">{s.email}</td>
                             <td className="py-2 text-xs text-muted-foreground">
                               {new Date(s.createdAt).toLocaleString()}
+                            </td>
+                            <td className="py-2 text-right">
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => {
+                                  if (confirm("Are you sure you want to delete this subscriber?")) {
+                                    deleteMutation.mutate(s.id);
+                                  }
+                                }}
+                                disabled={deleteMutation.isPending}
+                              >
+                                Delete
+                              </Button>
                             </td>
                           </tr>
                         ))}
