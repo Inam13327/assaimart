@@ -175,14 +175,49 @@ const AdminProducts = () => {
 
   const handleImageFileChange = (file: File | null) => {
     if (!file) return;
+
+    // Resize image logic
     const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result !== "string") return;
-      setForm((prev) => ({
-        ...prev,
-        imageUrl: result,
-      }));
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        // Max width/height
+        const MAX_WIDTH = 1000;
+        const MAX_HEIGHT = 1000;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        // Use original file type (to preserve transparency for PNGs)
+        // Quality param (0.8) works for JPEG/WebP, ignored for PNG
+        const dataUrl = canvas.toDataURL(file.type || "image/jpeg", 0.8);
+        
+        setForm((prev) => ({
+          ...prev,
+          imageUrl: dataUrl,
+        }));
+      };
+      if (typeof event.target?.result === "string") {
+         img.src = event.target.result;
+      }
     };
     reader.readAsDataURL(file);
   };
