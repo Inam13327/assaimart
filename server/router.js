@@ -319,6 +319,46 @@ export async function handleRequest(req, res) {
     return;
   }
 
+  // --- Image Serving (Public GET) ---
+  if (pathname && pathname.startsWith("/api/images/products/") && req.method === "GET") {
+    const id = pathname.split("/").pop();
+    try {
+      const [rows] = await pool.query("SELECT image_url FROM products WHERE id = ?", [id]);
+      if (rows.length === 0 || !rows[0].image_url) {
+        notFound(res);
+        return;
+      }
+      const imgData = rows[0].image_url;
+      
+      // If it's a Base64 string
+      if (imgData.startsWith("data:")) {
+        const matches = imgData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        if (matches && matches.length === 3) {
+          const type = matches[1];
+          const buffer = Buffer.from(matches[2], "base64");
+          
+          res.writeHead(200, {
+            "Content-Type": type,
+            "Content-Length": buffer.length,
+            "Cache-Control": "public, max-age=86400" // Cache for 1 day
+          });
+          res.end(buffer);
+          return;
+        }
+      }
+      
+      // If it's a normal URL or malformed, just redirect or 404
+      // But if it's a normal URL, we can't serve it as binary easily without proxying.
+      // However, if we generated the link, we expect it to be data.
+      // If the DB has http://..., we shouldn't have generated this link in the first place.
+      notFound(res);
+    } catch (e) {
+      console.error(e);
+      sendJson(res, 500, { error: e.message });
+    }
+    return;
+  }
+
   // --- Categories (Public GET) ---
   if (pathname === "/api/categories" && req.method === "GET") {
     try {
@@ -471,7 +511,9 @@ export async function handleRequest(req, res) {
         tier: p.category_tier || "premium", // Fallback if join is null
         productType: p.product_type,
         featuredHome: Boolean(p.is_featured),
-        imageUrl: p.image_url,
+        imageUrl: p.image_url && p.image_url.startsWith("data:") 
+          ? `/api/images/products/${p.id}` 
+          : p.image_url,
         notes: typeof p.notes === 'string' ? JSON.parse(p.notes) : p.notes,
         available: Boolean(p.stock_status),
         rating: p.rating ? Number(p.rating) : undefined,
@@ -511,7 +553,9 @@ export async function handleRequest(req, res) {
         segment: p.segment,
         productType: p.product_type,
         featuredHome: Boolean(p.is_featured),
-        imageUrl: p.image_url,
+        imageUrl: p.image_url && p.image_url.startsWith("data:") 
+          ? `/api/images/products/${p.id}` 
+          : p.image_url,
         notes: typeof p.notes === 'string' ? JSON.parse(p.notes) : p.notes,
         available: Boolean(p.stock_status),
         rating: p.rating ? Number(p.rating) : undefined,
@@ -664,7 +708,9 @@ export async function handleRequest(req, res) {
           segment: p.segment,
           productType: p.product_type,
           featuredHome: Boolean(p.is_featured),
-          imageUrl: p.image_url,
+          imageUrl: p.image_url && p.image_url.startsWith("data:") 
+            ? `/api/images/products/${p.id}` 
+            : p.image_url,
           notes: typeof p.notes === 'string' ? JSON.parse(p.notes) : p.notes,
           available: Boolean(p.stock_status),
           rating: p.rating ? Number(p.rating) : undefined,
@@ -759,6 +805,11 @@ export async function handleRequest(req, res) {
 
         const clauses = [];
         for (const [key, val] of Object.entries(body)) {
+          // If imageUrl is the internal reference URL, do not update the DB column (keep the existing base64)
+          if (key === 'imageUrl' && typeof val === 'string' && val.startsWith('/api/images/products/')) {
+            continue;
+          }
+
           if (fieldMap[key]) {
             clauses.push(`${fieldMap[key]} = ?`);
             if (key === 'notes' || key === 'ratingMedia') {
