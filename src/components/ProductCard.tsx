@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ShoppingBag, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Product } from '@/lib/types';
 import { useCart } from '@/context/CartContext';
 import { Link } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { likeProduct } from '@/lib/api';
 
 interface ProductCardProps {
   product: Product;
@@ -14,6 +15,50 @@ interface ProductCardProps {
 const ProductCard = ({ product, compact }: ProductCardProps) => {
   const { addToCart } = useCart();
   const [open, setOpen] = useState(false);
+  const [likes, setLikes] = useState(product.likes || 0);
+  const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    const likedProducts = JSON.parse(localStorage.getItem('likedProducts') || '[]');
+    if (likedProducts.includes(product.id)) {
+      setIsLiked(true);
+    }
+  }, [product.id]);
+
+  const handleLike = async (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent link navigation if inside a link, though here it's a button
+    e.stopPropagation();
+
+    try {
+      if (isLiked) {
+        // Unlike logic
+        const res = await likeProduct(product.id, 'unlike');
+        if (res && typeof res.likes === 'number') {
+          setLikes(res.likes);
+          setIsLiked(false);
+          
+          const likedProducts = JSON.parse(localStorage.getItem('likedProducts') || '[]');
+          const newLikedProducts = likedProducts.filter((id: string) => id !== product.id);
+          localStorage.setItem('likedProducts', JSON.stringify(newLikedProducts));
+        }
+      } else {
+        // Like logic
+        const res = await likeProduct(product.id, 'like');
+        if (res && typeof res.likes === 'number') {
+          setLikes(res.likes);
+          setIsLiked(true);
+          
+          const likedProducts = JSON.parse(localStorage.getItem('likedProducts') || '[]');
+          if (!likedProducts.includes(product.id)) {
+            likedProducts.push(product.id);
+            localStorage.setItem('likedProducts', JSON.stringify(likedProducts));
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Failed to like product", error);
+    }
+  };
 
   return (
     <div
@@ -37,9 +82,12 @@ const ProductCard = ({ product, compact }: ProductCardProps) => {
         )}
       </div>
 
-      {/* Wishlist Button */}
-      <button className="absolute top-4 right-4 z-10 p-2 rounded-full bg-background/50 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background">
-        <Heart className="h-4 w-4" />
+      {/* Wishlist Button - Reused for Like */}
+      <button 
+        onClick={handleLike}
+        className={`absolute top-4 right-4 z-10 p-2 rounded-full bg-background/50 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background ${isLiked ? 'text-red-500 opacity-100' : ''}`}
+      >
+        <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
       </button>
 
       {/* Image */}
@@ -143,8 +191,8 @@ const ProductCard = ({ product, compact }: ProductCardProps) => {
                 </div>
               </DialogContent>
             </Dialog>
-            <Button variant="outline" onClick={handleLike} className="flex gap-2 min-w-[60px]">
-              <Heart className="h-4 w-4" />
+            <Button variant="outline" onClick={handleLike} className={`flex gap-2 min-w-[60px] ${isLiked ? 'text-red-500 border-red-200 bg-red-50' : ''}`}>
+              <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
               <span>{likes}</span>
             </Button>
           </div>

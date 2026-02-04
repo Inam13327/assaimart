@@ -363,7 +363,15 @@ export async function handleRequest(req, res) {
   if (pathname && pathname.startsWith("/api/products/") && pathname.endsWith("/like") && req.method === "POST") {
     const id = pathname.split("/")[3]; // /api/products/ID/like
     try {
-      await pool.query("UPDATE products SET likes = COALESCE(likes, 0) + 1 WHERE id = ?", [id]);
+      const body = await parseBody(req);
+      const isUnlike = body && body.action === 'unlike';
+      
+      if (isUnlike) {
+        await pool.query("UPDATE products SET likes = GREATEST(COALESCE(likes, 0) - 1, 0) WHERE id = ?", [id]);
+      } else {
+        await pool.query("UPDATE products SET likes = COALESCE(likes, 0) + 1 WHERE id = ?", [id]);
+      }
+      
       const [rows] = await pool.query("SELECT likes FROM products WHERE id = ?", [id]);
       sendJson(res, 200, { likes: rows[0].likes });
     } catch (e) {

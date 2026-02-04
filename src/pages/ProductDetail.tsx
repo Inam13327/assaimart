@@ -18,20 +18,44 @@ const ProductDetail = () => {
   });
   const { addToCart } = useCart();
   const [likes, setLikes] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     if (product) {
       setLikes(product.likes || 0);
+      const likedProducts = JSON.parse(localStorage.getItem('likedProducts') || '[]');
+      if (likedProducts.includes(product.id)) {
+        setIsLiked(true);
+      }
     }
   }, [product]);
 
   const handleLike = async () => {
     if (!id) return;
     try {
-      const res = await likeProduct(id);
-      setLikes(res.likes);
+      if (isLiked) {
+        // Unlike logic
+        const res = await likeProduct(id, 'unlike');
+        setLikes(res.likes);
+        setIsLiked(false);
+        
+        const likedProducts = JSON.parse(localStorage.getItem('likedProducts') || '[]');
+        const newLikedProducts = likedProducts.filter((pid: string) => pid !== id);
+        localStorage.setItem('likedProducts', JSON.stringify(newLikedProducts));
+      } else {
+        // Like logic
+        const res = await likeProduct(id, 'like');
+        setLikes(res.likes);
+        setIsLiked(true);
+        
+        const likedProducts = JSON.parse(localStorage.getItem('likedProducts') || '[]');
+        if (!likedProducts.includes(id)) {
+          likedProducts.push(id);
+          localStorage.setItem('likedProducts', JSON.stringify(likedProducts));
+        }
+      }
     } catch (e) {
-      console.error("Failed to like", e);
+      console.error("Failed to like/unlike", e);
     }
   };
 
@@ -198,11 +222,22 @@ const ProductDetail = () => {
                   onClick={() => addToCart(product)}
                   disabled={!product.inStock}
                 >
-                  <ShoppingBag className="h-5 w-5 mr-2" />
-                  {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                  {product.inStock ? (
+                    <>
+                      <ShoppingBag className="h-5 w-5 mr-2" />
+                      Add to Cart
+                    </>
+                  ) : (
+                    'Out of Stock'
+                  )}
                 </Button>
-                <Button variant="outline" size="xl" onClick={handleLike} className="flex gap-2">
-                  <Heart className="h-5 w-5" />
+                <Button 
+                  variant="outline" 
+                  size="xl" 
+                  onClick={handleLike} 
+                  className={`flex gap-2 ${isLiked ? 'text-red-500 border-red-200 bg-red-50' : ''}`}
+                >
+                  <Heart className={`h-5 w-5 ${isLiked ? 'fill-current' : ''}`} />
                   <span>{likes}</span>
                 </Button>
               </div>

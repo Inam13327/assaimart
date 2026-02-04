@@ -153,9 +153,10 @@ export function getProduct(id: string) {
   return request<RawProduct>(`/products/${id}`).then(transformProduct);
 }
 
-export function likeProduct(id: string) {
+export function likeProduct(id: string, action: 'like' | 'unlike' = 'like') {
   return request<{ likes: number }>(`/products/${id}/like`, {
     method: "POST",
+    body: JSON.stringify({ action }),
   });
 }
 
