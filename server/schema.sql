@@ -34,7 +34,7 @@ CREATE TABLE products (
     size VARCHAR(50),
     price DECIMAL(10, 2) NOT NULL,
     original_price DECIMAL(10, 2),
-    image_url TEXT,
+    image_url LONGTEXT,
     category_slug VARCHAR(255),
     segment VARCHAR(50),
     product_type VARCHAR(50),
@@ -72,7 +72,7 @@ CREATE TABLE order_items (
     product_name VARCHAR(255),
     quantity INT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
-    image_url TEXT,
+    image_url LONGTEXT,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
 );
