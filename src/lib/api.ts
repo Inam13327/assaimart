@@ -86,9 +86,21 @@ interface RawProduct {
 function transformProduct(p: RawProduct): Product {
   const category: Product["category"] =
     p.segment === "men" || p.segment === "women" || p.segment === "unisex" ? (p.segment as Product["category"]) : "unisex";
+  
+  let image = p.imageUrl || p.image || "";
+  // Fix relative image URLs from backend
+  if (image.startsWith("/api/images/") && !image.startsWith("http")) {
+    try {
+      const apiOrigin = new URL(API_BASE).origin;
+      image = `${apiOrigin}${image}`;
+    } catch (e) {
+      console.error("Failed to resolve image URL", e);
+    }
+  }
+
   return {
     ...p,
-    image: p.imageUrl || p.image || "",
+    image,
     category,
     notes: typeof p.notes === "string" 
       ? { top: p.notes.split(",").map((s) => s.trim()), heart: [], base: [] } 
