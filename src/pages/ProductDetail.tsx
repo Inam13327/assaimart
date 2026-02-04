@@ -5,17 +5,35 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartSidebar from "@/components/CartSidebar";
 import { Button } from "@/components/ui/button";
-import { getProduct } from "@/lib/api";
+import { getProduct, likeProduct } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
+import { useState, useEffect } from "react";
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { data: product, isLoading, error } = useQuery({
+  const { data: product, isLoading, error, refetch } = useQuery({
     queryKey: ["product", id],
     queryFn: () => getProduct(id || ""),
     enabled: Boolean(id),
   });
   const { addToCart } = useCart();
+  const [likes, setLikes] = useState(0);
+
+  useEffect(() => {
+    if (product) {
+      setLikes(product.likes || 0);
+    }
+  }, [product]);
+
+  const handleLike = async () => {
+    if (!id) return;
+    try {
+      const res = await likeProduct(id);
+      setLikes(res.likes);
+    } catch (e) {
+      console.error("Failed to like", e);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -139,18 +157,7 @@ const ProductDetail = () => {
                       {product.notes.top.join(', ')}
                     </span>
                   </div>
-                  <div className="flex gap-4">
-                    <span className="text-sm font-medium text-gold w-16">Heart:</span>
-                    <span className="text-sm text-muted-foreground">
-                      {product.notes.heart.join(', ')}
-                    </span>
-                  </div>
-                  <div className="flex gap-4">
-                    <span className="text-sm font-medium text-gold w-16">Base:</span>
-                    <span className="text-sm text-muted-foreground">
-                      {product.notes.base.join(', ')}
-                    </span>
-                  </div>
+                  {/* Removed Heart and Base as requested */}
                 </div>
               </div>
 
@@ -194,8 +201,9 @@ const ProductDetail = () => {
                   <ShoppingBag className="h-5 w-5 mr-2" />
                   {product.inStock ? 'Add to Cart' : 'Out of Stock'}
                 </Button>
-                <Button variant="outline" size="xl">
+                <Button variant="outline" size="xl" onClick={handleLike} className="flex gap-2">
                   <Heart className="h-5 w-5" />
+                  <span>{likes}</span>
                 </Button>
               </div>
 

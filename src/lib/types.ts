@@ -18,6 +18,7 @@ export interface Product {
   bestseller?: boolean;
   rating?: number;
   ratingMedia?: { type: "image" | "video"; url: string }[];
+  likes?: number;
 }
 
 export interface CartItem {

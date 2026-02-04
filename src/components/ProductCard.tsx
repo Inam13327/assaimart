@@ -104,44 +104,50 @@ const ProductCard = ({ product, compact }: ProductCardProps) => {
               'Out of Stock'
             )}
           </Button>
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="w-full">
-                Rating
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Rating for {product.name}</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="flex items-baseline gap-3">
-                  <span className="text-3xl font-bold text-gold">
-                    {typeof product.rating === 'number' ? product.rating.toFixed(1) : 'N/A'}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {typeof product.rating === 'number' ? 'out of 5' : 'No rating yet'}
-                  </span>
-                </div>
-                {Array.isArray(product.ratingMedia) && product.ratingMedia.length > 0 && (
-                  <div className="grid grid-cols-2 gap-3">
-                    {product.ratingMedia.map((m, idx) => (
-                      <div key={idx} className="rounded-lg overflow-hidden border border-border">
-                        {m.type === 'video' ? (
-                          <video src={m.url} controls className="w-full h-full" />
-                        ) : (
-                          <img src={m.url} alt={`rating media ${idx + 1}`} className="w-full h-full object-cover" />
-                        )}
-                      </div>
-                    ))}
+          <div className="flex gap-2">
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="flex-1">
+                  Rating
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Rating for {product.name}</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-3xl font-bold text-gold">
+                      {typeof product.rating === 'number' ? product.rating.toFixed(1) : 'N/A'}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {typeof product.rating === 'number' ? 'out of 5' : 'No rating yet'}
+                    </span>
                   </div>
-                )}
-                {(!product.ratingMedia || product.ratingMedia.length === 0) && (
-                  <p className="text-sm text-muted-foreground">No rating media for this product.</p>
-                )}
-              </div>
-            </DialogContent>
-          </Dialog>
+                  {Array.isArray(product.ratingMedia) && product.ratingMedia.length > 0 && (
+                    <div className="grid grid-cols-2 gap-3">
+                      {product.ratingMedia.map((m, idx) => (
+                        <div key={idx} className="rounded-lg overflow-hidden border border-border">
+                          {m.type === 'video' ? (
+                            <video src={m.url} controls className="w-full h-full" />
+                          ) : (
+                            <img src={m.url} alt={`rating media ${idx + 1}`} className="w-full h-full object-cover" />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {(!product.ratingMedia || product.ratingMedia.length === 0) && (
+                    <p className="text-sm text-muted-foreground">No rating media for this product.</p>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
+            <Button variant="outline" onClick={handleLike} className="flex gap-2 min-w-[60px]">
+              <Heart className="h-4 w-4" />
+              <span>{likes}</span>
+            </Button>
+          </div>
         </div>
       </div>
     </div>

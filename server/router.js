@@ -359,6 +359,19 @@ export async function handleRequest(req, res) {
     return;
   }
 
+  // --- Like Product (POST) ---
+  if (pathname && pathname.startsWith("/api/products/") && pathname.endsWith("/like") && req.method === "POST") {
+    const id = pathname.split("/")[3]; // /api/products/ID/like
+    try {
+      await pool.query("UPDATE products SET likes = COALESCE(likes, 0) + 1 WHERE id = ?", [id]);
+      const [rows] = await pool.query("SELECT likes FROM products WHERE id = ?", [id]);
+      sendJson(res, 200, { likes: rows[0].likes });
+    } catch (e) {
+      sendJson(res, 500, { error: e.message });
+    }
+    return;
+  }
+
   // --- Categories (Public GET) ---
   if (pathname === "/api/categories" && req.method === "GET") {
     try {
@@ -518,6 +531,7 @@ export async function handleRequest(req, res) {
         available: Boolean(p.stock_status),
         rating: p.rating ? Number(p.rating) : undefined,
         ratingMedia: typeof p.rating_media === 'string' ? JSON.parse(p.rating_media) : p.rating_media,
+        likes: p.likes || 0,
       }));
       
       // Fallback for missing tier (e.g. if category deleted)
@@ -560,6 +574,7 @@ export async function handleRequest(req, res) {
         available: Boolean(p.stock_status),
         rating: p.rating ? Number(p.rating) : undefined,
         ratingMedia: typeof p.rating_media === 'string' ? JSON.parse(p.rating_media) : p.rating_media,
+        likes: p.likes || 0,
       };
       sendJson(res, 200, product);
     } catch (e) {

@@ -1,8 +1,8 @@
 import type { AdminAuthResponse, AdminOverview, AdminProduct, AdminProductInput, Order, Product } from "./types";
 
-const API_BASE = import.meta.env.PROD 
+const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.PROD 
   ? "https://assaimartofficial.vercel.app/api" 
-  : "http://localhost:4000/api";
+  : "http://localhost:4000/api");
 
 function logApiError(details: { method: string; path: string; status?: number; message?: string; error?: unknown }) {
   // Always log errors to console for visibility
@@ -81,6 +81,7 @@ interface RawProduct {
   featuredHome?: boolean;
   rating?: number;
   ratingMedia?: { type: "image" | "video"; url: string }[];
+  likes?: number;
 }
 
 function transformProduct(p: RawProduct): Product {
@@ -110,6 +111,7 @@ function transformProduct(p: RawProduct): Product {
     bestseller: false,
     rating: p.rating,
     ratingMedia: p.ratingMedia || [],
+    likes: p.likes || 0,
   };
 }
 
@@ -149,6 +151,12 @@ export function getProductTypes() {
 
 export function getProduct(id: string) {
   return request<RawProduct>(`/products/${id}`).then(transformProduct);
+}
+
+export function likeProduct(id: string) {
+  return request<{ likes: number }>(`/products/${id}/like`, {
+    method: "POST",
+  });
 }
 
 export function sendContactMessage(payload: { name: string; email: string; subject: string; message: string }) {
