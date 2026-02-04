@@ -119,7 +119,7 @@ const ProductCard = ({ product, compact }: ProductCardProps) => {
           </h3>
         </Link>
         <p className={compact ? "text-[10px] text-muted-foreground mb-2 line-clamp-2" : "text-xs text-muted-foreground mb-2 line-clamp-2"}>
-          {product.description}
+          {product.description || "No description available"}
         </p>
 
         <div className="flex items-center justify-between">

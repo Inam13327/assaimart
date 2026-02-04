@@ -495,6 +495,10 @@ export async function handleRequest(req, res) {
         querySql += " AND p.category_slug = ?";
         params.push(query.category);
       }
+      if (query.brand) {
+        querySql += " AND p.brand = ?";
+        params.push(query.brand);
+      }
       if (query.segment) {
         querySql += " AND p.segment = ?";
         params.push(query.segment);

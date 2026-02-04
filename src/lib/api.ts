@@ -99,13 +99,21 @@ function transformProduct(p: RawProduct): Product {
     }
   }
 
+  const notes = p.notes && typeof p.notes === "object" && !Array.isArray(p.notes)
+    ? p.notes as { top?: string[]; heart?: string[]; base?: string[] }
+    : typeof p.notes === "string"
+      ? { top: p.notes.split(",").map((s) => s.trim()), heart: [], base: [] }
+      : { top: [], heart: [], base: [] };
+
   return {
     ...p,
     image,
     category,
-    notes: typeof p.notes === "string" 
-      ? { top: p.notes.split(",").map((s) => s.trim()), heart: [], base: [] } 
-      : p.notes || { top: [], heart: [], base: [] },
+    notes: {
+      top: Array.isArray(notes.top) ? notes.top : [],
+      heart: Array.isArray(notes.heart) ? notes.heart : [],
+      base: Array.isArray(notes.base) ? notes.base : [],
+    },
     inStock: p.available !== false,
     featured: p.featuredHome,
     bestseller: false,
@@ -119,10 +127,11 @@ export function getCategories() {
   return request("/categories");
 }
 
-export function getProducts(params?: { category?: string; segment?: string; tier?: string; q?: string; featured?: boolean; productType?: string }) {
+export function getProducts(params?: { category?: string; segment?: string; tier?: string; q?: string; featured?: boolean; productType?: string; brand?: string }) {
   const search = new URLSearchParams();
   if (params) {
     if (params.category) search.set("category", params.category);
+    if (params.brand) search.set("brand", params.brand);
     if (params.segment) search.set("segment", params.segment);
     if (params.tier) search.set("tier", params.tier);
     if (params.featured) search.set("featured", "true");

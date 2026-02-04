@@ -4,8 +4,9 @@ import { ArrowLeft, ShoppingBag, Heart, Truck, Shield, RotateCcw } from "lucide-
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartSidebar from "@/components/CartSidebar";
+import ProductCard from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
-import { getProduct, likeProduct } from "@/lib/api";
+import { getProduct, getProducts, likeProduct } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
 
@@ -16,6 +17,22 @@ const ProductDetail = () => {
     queryFn: () => getProduct(id || ""),
     enabled: Boolean(id),
   });
+
+  const { data: relatedProducts } = useQuery({
+    queryKey: ["related-products", product?.brand, product?.name],
+    queryFn: () => {
+      if (!product) return [];
+      const firstWord = product.name.split(" ")[0];
+      // Prioritize brand, fallback to first word of name if brand is missing or to augment
+      if (product.brand) {
+        return getProducts({ brand: product.brand });
+      } else {
+        return getProducts({ q: firstWord });
+      }
+    },
+    enabled: Boolean(product),
+  });
+
   const { addToCart } = useCart();
   const [likes, setLikes] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
@@ -259,6 +276,23 @@ const ProductDetail = () => {
               </div>
             </div>
           </div>
+          
+          {/* Related Products Section */}
+          {relatedProducts && relatedProducts.length > 0 && (
+            <div className="mt-24 border-t border-border pt-16">
+              <h2 className="text-3xl font-serif font-bold text-foreground mb-8 text-center">
+                You May Also Like
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {relatedProducts
+                  .filter(p => p.id !== product.id)
+                  .slice(0, 4)
+                  .map(p => (
+                    <ProductCard key={p.id} product={p} />
+                  ))}
+              </div>
+            </div>
+          )}
         </div>
       </main>
 
