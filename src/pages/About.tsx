@@ -46,6 +46,7 @@ const About = () => {
               Founded with a passion for quality and variety, ASSAIMART has become 
               a trusted destination for shoppers seeking authentic products, 
               from fine fragrances to fashion and lifestyle essentials.
+            <li>Built by friends. Powered by vision. Scaled for the future.</li>
             </p>
           </div>
         </section>
@@ -63,7 +64,8 @@ const About = () => {
                   Our Mission
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  To make luxury fragrances accessible to everyone by offering authentic, 
+
+                  To make luxury Style accessible to everyone by offering authentic, 
                   premium perfumes at competitive prices, backed by exceptional customer 
                   service and a seamless shopping experience.
                 </p>

@@ -83,7 +83,7 @@ const ProductDetail = () => {
         <CartSidebar />
         <main className="pt-32 pb-24">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-2xl font-serif font-bold text-foreground mb-4">Loading perfume…</h1>
+            <h1 className="text-2xl font-serif font-bold text-foreground mb-4">Loading Your Product…</h1>
             <p className="text-muted-foreground mb-8">Please wait while we fetch the fragrance details.</p>
           </div>
         </main>
