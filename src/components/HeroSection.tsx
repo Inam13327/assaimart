@@ -49,12 +49,13 @@ const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 bg-black">
         <img
           src={heroPerfume}
           alt="Premium Fragrance"
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full object-cover opacity-60 blur-sm absolute inset-0"
         />
+        
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50" />
       </div>

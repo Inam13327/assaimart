@@ -115,9 +115,32 @@
   }
 
   .glass-card {
-    background: hsl(0 0% 8% / 0.8);
-    backdrop-filter: blur(20px);
-    border: 1px solid hsl(0 0% 20% / 0.5);
+    @apply bg-card/60 backdrop-blur-md border border-white/5 shadow-card;
+  }
+
+  .glass-card-hover {
+    @apply transition-all duration-300 hover:bg-card/80 hover:border-gold/30 hover:shadow-gold hover:-translate-y-1;
+  }
+
+  /* Animations */
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-100%) translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) translateY(0);
+    }
+  }
+
+  .animate-slide-in-left {
+    animation: slideInLeft 0.5s ease-out forwards;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
   }
 
   .hover-lift {
