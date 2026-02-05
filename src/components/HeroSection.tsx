@@ -53,7 +53,7 @@ const HeroSection = () => {
         <img
           src={heroPerfume}
           alt="Premium Fragrance"
-          className="w-full h-full object-cover opacity-60 blur-sm absolute inset-0"
+          className="w-full h-full object-cover opacity-70  absolute inset-0"
         />
         
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
